@@ -1,7 +1,7 @@
 String[] dearData;
 String[][] data;
 
-// Arrays to store specific columns of data
+//Array of each specific category
 ArrayList<String> daysOfWeek;
 ArrayList<String> drinkTypes;
 ArrayList<String> times;
@@ -10,11 +10,10 @@ ArrayList<String> whoMades;
 
 int flowerIndex = 0; // To keep track of which flower to draw next
 
-// Array to store flower properties
 ArrayList<Flower> flowers;
 
 int getColorForDay(String day) {
-  int red = 255;  // Maximum red for lighter colors
+  int red = 255; 
   int green = 80;
   int blue = 150;  
 
@@ -43,45 +42,42 @@ void setup() {
   size(800, 800);
   background(255);
 
-  // Loading the data file
+  
   dearData = loadStrings("deardata.csv");
 
   // Initialize the 2D data array to store each line's data
   data = new String[dearData.length][];
 
-  // Initialize the ArrayLists to store each column
+  //Initialising each of the arrays
   daysOfWeek = new ArrayList<String>();
   drinkTypes = new ArrayList<String>();
   times = new ArrayList<String>();
   reasons= new ArrayList<String>();
   whoMades = new ArrayList<String>();
 
-  // Initialize the flower list
+ 
   flowers = new ArrayList<Flower>();
 
-  // Loop through each line of the data file and Split each line by commas
   for (int i = 0; i < dearData.length; i++) {
     String[] eachDataItems = split(dearData[i], ",");
-
-    // Store the split data into the 2D array
+    
     data[i] = new String[eachDataItems.length];
-
-    // Loop through each individual item in the current line and Store in the data array
+    
     for (int d = 0; d < eachDataItems.length; d++) {
       data[i][d] = eachDataItems[d]; 
 
       // Check if we have the correct 5 number of columns 
       if (eachDataItems.length >= 5) {
         if (d == 0) {
-          daysOfWeek.add(eachDataItems[d]);   // Day of the week (1st column)
+          daysOfWeek.add(eachDataItems[d]);   
         } else if (d == 1) {
-          drinkTypes.add(eachDataItems[d]);   // Drink type (2nd column)
+          drinkTypes.add(eachDataItems[d]);   
         } else if (d == 2) {
-          times.add(eachDataItems[d]);        // Time (3rd column)
+          times.add(eachDataItems[d]);       
         } else if (d == 3) {
-          reasons.add(eachDataItems[d]);      // Reason (4th column)
+          reasons.add(eachDataItems[d]);      
         } else if (d == 4) {
-          whoMades.add(eachDataItems[d]);     // Who made it (5th column)
+          whoMades.add(eachDataItems[d]);     
         }
       }
     }
@@ -95,11 +91,8 @@ void drawFlower(float x, float y, float flowerSize, int petals, String day, bool
   stroke(flowerColor);
   pushMatrix();
   translate(x, y);
-  
-  
-  // Rotate the flower continuously if it's "Myself"
   if (rotateFlower) {
-    rotate(frameCount * 0.05); // Rotate the flower continuously if it's "Myself"
+    rotate(frameCount * 0.05); 
   }
 
   for (int i = 0; i < petals; i++) {
@@ -119,7 +112,7 @@ void draw() {
     f.display();
   }
 
-  // Display information about data when the mouse is hovering over a flower
+  // Show information about the data when the mouse is hovering over a flower
   for (Flower f : flowers) {
     if (dist(mouseX, mouseY, f.x, f.y) < f.size * 2) {
       String info = "Day: " + f.day + "\nTime: " + times.get(flowers.indexOf(f)) + "\nDrink: " + drinkTypes.get(flowers.indexOf(f));
@@ -129,24 +122,21 @@ void draw() {
   }
 }
 
-//Will execute when any key is pressed
 void keyPressed() {
   if (flowerIndex < daysOfWeek.size()) {
     // Get the day for the current flower
     String day = daysOfWeek.get(flowerIndex);
 
-    // Setting the flower size based on the drink type
-    float flowerSize = 5; // Default size will represent the names of the columns
+    // flower size will vary depending on the drink type
+    float flowerSize = 5; // Default size will visually represent the names of the columns
     if (flowerIndex < drinkTypes.size()) {
       String drinkType = drinkTypes.get(flowerIndex);
-
-      // Check the drink type and set the flower size accordingly
       if (drinkType.equalsIgnoreCase("Tea")) {
-        flowerSize = 40;  // Big size for Tea
+        flowerSize = 40; 
       } else if (drinkType.equalsIgnoreCase("Hot chocolate")) {
-        flowerSize = 20;   // Medium size for Hot chocolate
+        flowerSize = 20;  
       } else if (drinkType.equalsIgnoreCase("Green tea")) {
-        flowerSize = 10;   // Small size for Green tea
+        flowerSize = 10;
       }
     }
 
@@ -155,8 +145,8 @@ void keyPressed() {
     if (flowerIndex < times.size()) {
       String timeStr = times.get(flowerIndex);
       if (timeStr.length() == 4) {
-        int hour = int(timeStr.substring(0, 2));  // Extract hour from time
-        petals = hour;  // Set petals equal to the hour (1-12)
+        int hour = int(timeStr.substring(0, 2)); 
+        petals = hour; 
       }
     }
 
@@ -169,20 +159,14 @@ void keyPressed() {
       }
     }
 
-    //flowers stay fully within the window bounds
     float xPos = random(width);
     float yPos = random(height);
-
-    //flower radius will be center + petals
     float flowerRadius = flowerSize * 2;
-
-    // Constrain the position based on the flower's full radius to ensure flower center stays within window
     xPos = constrain(xPos, flowerRadius, width - flowerRadius); 
     yPos = constrain(yPos, flowerRadius, height - flowerRadius); 
 
     // Add a new flower to the list 
     flowers.add(new Flower(xPos, yPos, flowerSize, petals, day, rotateFlower));
-
     // Increment the flowerIndex to move to the next flower
     flowerIndex++;
   }
@@ -190,13 +174,12 @@ void keyPressed() {
 
 
 class Flower {
-  float x, y; // Position of the flower
-  float size; // Size of the flower
-  int petals; // Number of petals
-  String day; // Day of the week
-  boolean rotateFlower; // Whether the flower should rotate
+  float x, y; 
+  float size;
+  int petals; 
+  String day; 
+  boolean rotateFlower; 
 
-  //Constructor method
   Flower(float x, float y, float size, int petals, String day, boolean rotateFlower) {
     this.x = x;
     this.y = y;
